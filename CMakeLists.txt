@@ -24,6 +24,7 @@ if(INFEROP_BUILD_CUDA)
   check_language(CUDA)
   if(CMAKE_CUDA_COMPILER)
     enable_language(CUDA)
+    find_package(CUDAToolkit REQUIRED)  # CUDA::cuda_runtime imported target
     set(INFEROP_CUDA_ENABLED ON)
 
     # Drop architectures the detected nvcc does not know about.
