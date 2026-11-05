@@ -1,7 +1,7 @@
 # Roadmap
 
-依据：2025–2026 社区公开讨论（vLLM / DeepGEMM / FlashInfer issues、HuggingFace
-kernel 工程博客、NVIDIA 开发者论坛）中的算子痛点，按"热度 × 可行性"排序。
+依据主流 LLM 推理框架与低精度计算库的公开实践、论文趋势及工程经验，
+按"影响面 × 可行性"排序列出后续算子计划。
 
 ## v0.1 ✅（本版本）—— 推理逐层算子 + FP8 量化基线
 
@@ -31,7 +31,7 @@ kernel 工程博客、NVIDIA 开发者论坛）中的算子痛点，按"热度 �
 - [ ] NVFP4 分组 GEMM（MoE 权重压缩主战场）+ FP4→FP16 epilogue
 - [ ] sm_120（DGX Spark）内存一致模型适配（cva）
 
-## v0.5 —— 新兴算子（社区热点）
+## v0.5 —— 新兴算子（业界热点）
 
 - [ ] 稀疏 attention：NSA / MoBA top-k block selection kernel
 - [ ] 线性注意力：Gated DeltaNet / GLA chunk-wise kernel（训练+推理）

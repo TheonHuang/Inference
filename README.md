@@ -1,11 +1,11 @@
 # Inference / inferop
 
 面向多代 NVIDIA GPU 架构（Ampere / Ada / Hopper / Blackwell）的 **LLM 推理算子库**：
-实现当下推理栈最缺、社区讨论热度最高的那批算子，用"一个算子 × 多代架构 × 带黄金基准测试"的方式打磨。
+覆盖当前推理栈中占耗时大头、且对整体吞吐影响最直接的算子，用"一个算子 × 多代架构 × 带黄金基准测试"的方式打磨。
 
 ## 为什么是这些算子
 
-按 2025–2026 社区与论文的公开讨论（vLLM/DeepSeek/FlashInfer 相关 issue、HuggingFace/Reddit 上的 kernel 工程帖），
+综合主流开源推理框架与低精度计算库的公开实践、论文与业界工程趋势，
 当前 LLM 推理的算子瓶颈集中在：
 
 | 痛点 | 本仓库对应算子 | 状态 |
@@ -96,7 +96,7 @@ scripts/           check_fp8.py（数值验证）/ format.sh
 
 - `docs/DESIGN.md` —— 分层、dispatch、多架构策略、内存布局约定
 - `docs/PERF.md` —— 各代 GPU roofline 参考表、优化方法论、逐算子优化清单
-- `docs/ROADMAP.md` —— 版本规划与社区痛点对照
+- `docs/ROADMAP.md` —— 版本规划与业界趋势对照
 
 ## License
 
