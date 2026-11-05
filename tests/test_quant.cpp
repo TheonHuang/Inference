@@ -27,7 +27,8 @@ void cpu_golden() {
   inferop::testutil::check(bad == 0, "roundtrip error <= 2^-4");
 
   // zero row edge case: scale=1, all zeros
-  std::vector<float> z(kCols, 0.f), zq(kCols, 0), zs(1, 0);
+  std::vector<float> z(kCols, 0.f), zs(1, 0);
+  std::vector<uint8_t> zq(kCols, 0);
   inferop::ref::quant_fp8_per_token_group(zq.data(), zs.data(), z.data(), 1, kCols, kGs);
   inferop::testutil::check(zs[0] == 1.0f, "zero group -> scale 1");
   bool allz = true;
