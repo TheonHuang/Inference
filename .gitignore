@@ -1,0 +1,16 @@
+build/
+build-*/
+out/
+.vscode/
+.idea/
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.dylib
+*.exe
+__pycache__/
+*.pyc
+compile_commands.json
+.cache/
