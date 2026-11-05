@@ -1,6 +1,8 @@
 // Standalone test : per-token-group FP8 quantization (CPU golden + GPU
 // cross-check). The GPU kernel must produce byte-identical q + scales to the
 // CPU reference (same deterministic algorithm).
+#include <algorithm>
+
 #include "test_util.h"
 #include "reference/reference.h"
 
@@ -18,13 +20,16 @@ void cpu_golden() {
   inferop::ref::quant_fp8_per_token_group(q.data(), s.data(), x.data(), kRows, kCols, kGs);
   inferop::ref::dequant_fp8_per_token_group(dq.data(), q.data(), s.data(), kRows, kCols, kGs);
 
-  // E4M3 relative error bound: 2^-4 on every element
+  // Quantization error bound: E4M3 RNE gives rel err <= 2^-4 in the normal
+  // range, but tiny elements land in the denormal grid where the error is
+  // absolute: <= half the max grid step (2^-10) in scaled units.
   int bad = 0;
   for (size_t i = 0; i < x.size(); ++i) {
-    float tol = std::fabs(x[i]) * (1.f / 16.f) + 1e-7f;
+    float gs = s[i / kGs];
+    float tol = std::max(std::fabs(x[i]) * (1.f / 16.f), gs * 1.5e-3f) + 1e-30f;
     if (std::fabs(dq[i] - x[i]) > tol) bad++;
   }
-  inferop::testutil::check(bad == 0, "roundtrip error <= 2^-4");
+  inferop::testutil::check(bad == 0, "roundtrip error within grid bound");
 
   // zero row edge case: scale=1, all zeros
   std::vector<float> z(kCols, 0.f), zs(1, 0);

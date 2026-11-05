@@ -23,11 +23,11 @@ void cpu_golden() {
   double rms = std::sqrt(ss / double(kRows * kCols));
   inferop::testutil::check(std::fabs(rms - 1.0) < 1e-3, "unit-weight output RMS == 1");
 
-  std::vector<float> res(kRows * kCols), xr(kRows * kCols), wout(kRows * kCols),
-      wres(kRows * kCols);
-  for (auto& v : res) v = inferop::testutil::normal(0.f, 1.f);
+  // wres carries the input residual and receives res+x in place
+  std::vector<float> xr(kRows * kCols), wout(kRows * kCols), wres(kRows * kCols);
+  for (auto& v : wres) v = inferop::testutil::normal(0.f, 1.f);
   for (auto& v : xr) v = inferop::testutil::normal(0.f, 1.f);
-  std::vector<float> res_copy = res;
+  std::vector<float> res_copy = wres;
   inferop::ref::fused_add_rmsnorm(wres.data(), wout.data(), xr.data(), w.data(), kRows, kCols,
                                   kEps);
   // residual must equal res + x
