@@ -21,6 +21,7 @@
 namespace inferop {
 namespace kernels {
 namespace {
+using namespace inferop::gpu;
 
 template <typename T, int HEAD_DIM, int BLOCK_THREADS>
 __global__ void paged_attn_decode_kernel(T* __restrict__ out, const T* __restrict__ q,
@@ -121,7 +122,7 @@ void launch_paged_attn(void* out, const void* q, const void* k_cache, const void
                        const int32_t* block_tables, const int32_t* seq_lens, int batch,
                        int num_heads, int num_kv_heads, int head_dim, int block_size,
                        int max_blocks_per_seq, float scale, cudaStream_t stream) {
-  dim3 grid(unsigned(num_heads), unsigned(batch));
+  dim3 grid{unsigned(num_heads), unsigned(batch)};
   switch (head_dim) {
     case 64:
       paged_attn_decode_kernel<T, 64, 64><<<grid, 64, 0, stream>>>(

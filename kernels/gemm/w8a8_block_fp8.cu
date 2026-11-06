@@ -18,6 +18,7 @@
 namespace inferop {
 namespace kernels {
 namespace {
+using namespace inferop::gpu;
 
 constexpr int kBlockThreads = 256;  // 16 (N) x 16 (M) thread tile
 constexpr int kBK = 128;            // == group size: one k-group per iteration
@@ -143,13 +144,13 @@ void launch_gemm(void* c, const void* a_q, const void* a_scales, const void* b_q
                  const void* b_scales, int64_t m, int64_t n, int64_t k, cudaStream_t stream) {
   int sm = current_sm();
   if (sm >= 90 && m >= 128) {
-    dim3 grid(unsigned((n + 63) / 64), unsigned((m + 127) / 128));
+    dim3 grid{unsigned((n + 63) / 64), unsigned((m + 127) / 128)};
     w8a8_block_gemm_kernel<128, 64, OUT_T><<<grid, kBlockThreads, 0, stream>>>(
         static_cast<OUT_T*>(c), static_cast<const uint8_t*>(a_q),
         static_cast<const float*>(a_scales), static_cast<const uint8_t*>(b_q),
         static_cast<const float*>(b_scales), int(m), int(n), int(k));
   } else {
-    dim3 grid(unsigned((n + 63) / 64), unsigned((m + 63) / 64));
+    dim3 grid{unsigned((n + 63) / 64), unsigned((m + 63) / 64)};
     w8a8_block_gemm_kernel<64, 64, OUT_T><<<grid, kBlockThreads, 0, stream>>>(
         static_cast<OUT_T*>(c), static_cast<const uint8_t*>(a_q),
         static_cast<const float*>(a_scales), static_cast<const uint8_t*>(b_q),

@@ -9,6 +9,7 @@
 namespace inferop {
 namespace kernels {
 namespace {
+using namespace inferop::gpu;
 
 constexpr int kBlockThreads = 256;
 
@@ -36,7 +37,7 @@ void silu_and_mul_impl(void* out, const void* gate_up, dtype dt, int64_t tokens,
   cudaStream_t s = static_cast<cudaStream_t>(stream);
   // Grid-dim limit is 2^31-1; typical shapes stay far below. Chunk if needed.
   if (blocks > int64_t(2147483647)) blocks = int64_t(2147483647);
-  dim3 grid(unsigned(blocks));
+  dim3 grid{unsigned(blocks)};
   switch (dt) {
     case dtype::fp32:
       silu_and_mul_kernel<float><<<grid, kBlockThreads, 0, s>>>(

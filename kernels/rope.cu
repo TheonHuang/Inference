@@ -12,6 +12,7 @@
 namespace inferop {
 namespace kernels {
 namespace {
+using namespace inferop::gpu;
 
 constexpr int kBlockThreads = 256;
 
@@ -47,7 +48,7 @@ void rope_neox_impl(void* qkv, const int64_t* positions, dtype dt, int64_t token
   int64_t pairs = int64_t(tokens) * heads * (rotary_dim / 2);
   int64_t blocks = (pairs + kBlockThreads - 1) / kBlockThreads;
   cudaStream_t s = static_cast<cudaStream_t>(stream);
-  dim3 grid(unsigned(blocks));
+  dim3 grid{unsigned(blocks)};
   switch (dt) {
     case dtype::fp32:
       rope_neox_kernel<float><<<grid, kBlockThreads, 0, s>>>(

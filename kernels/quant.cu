@@ -9,6 +9,7 @@
 namespace inferop {
 namespace kernels {
 namespace {
+using namespace inferop::gpu;
 
 constexpr int kBlockThreads = 256;
 
@@ -51,7 +52,7 @@ void quant_fp8_per_token_group_impl(void* q, void* scales, const void* x, dtype 
   if (rows <= 0 || cols <= 0 || group_size <= 0 || cols % group_size != 0) return;
   cudaStream_t s = static_cast<cudaStream_t>(stream);
   // rows in gridDim.x (up to 2^31), groups in gridDim.y (<= 65535)
-  dim3 grid(unsigned(rows), unsigned(cols / group_size));
+  dim3 grid{unsigned(rows), unsigned(cols / group_size)};
   switch (dt) {
     case dtype::fp32:
       quant_fp8_kernel<float><<<grid, kBlockThreads, 0, s>>>(
@@ -79,7 +80,7 @@ void dequant_fp8_per_token_group_impl(void* x, dtype dt, const void* q, const vo
   cudaStream_t s = static_cast<cudaStream_t>(stream);
   int64_t total = rows * cols;
   int64_t blocks = (total + kBlockThreads - 1) / kBlockThreads;
-  dim3 grid(unsigned(blocks));
+  dim3 grid{unsigned(blocks)};
   switch (dt) {
     case dtype::fp32:
       dequant_fp8_kernel<float><<<grid, kBlockThreads, 0, s>>>(

@@ -10,6 +10,7 @@
 namespace inferop {
 namespace kernels {
 namespace {
+using namespace inferop::gpu;
 
 constexpr int kBlockThreads = 256;
 
